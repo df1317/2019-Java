@@ -1,0 +1,9 @@
+[
+  {
+    "artifact": "frcJava (in project SixTalonArcadeDrive)",
+    "target": "roborio",
+    "debugfile": "frcJava_roborio.debugconfig",
+    "project": "SixTalonArcadeDrive",
+    "language": "java"
+  }
+]

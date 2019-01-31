@@ -48,12 +48,12 @@ import com.ctre.phoenix.motorcontrol.can.*;
 
 public class Robot extends TimedRobot {
 	/* Master Talons for arcade drive */
-	WPI_TalonSRX _frontLeftMotor = new WPI_TalonSRX(3);
-	WPI_TalonSRX _frontRightMotor = new WPI_TalonSRX(1);
+	WPI_TalonSRX _frontLeftMotor = new WPI_TalonSRX(1);
+	WPI_TalonSRX _frontRightMotor = new WPI_TalonSRX(3);
 
 	/* Follower Talons + Victors for six motor drives */
-	WPI_TalonSRX _leftSlave1 = new WPI_TalonSRX(4);
-	WPI_TalonSRX _rightSlave1 = new WPI_TalonSRX(2);
+	WPI_TalonSRX _leftSlave1 = new WPI_TalonSRX(2);
+	WPI_TalonSRX _rightSlave1 = new WPI_TalonSRX(4);
 
     /* Construct drivetrain by providing master motor controllers */
 	DifferentialDrive _drive = new DifferentialDrive(_frontLeftMotor, _frontRightMotor);
@@ -84,7 +84,7 @@ public class Robot extends TimedRobot {
 		 * Toggle booleans accordingly.... 
 		 */
 		_frontLeftMotor.setInverted(false); // <<<<<< Adjust this until robot drives forward when stick is forward
-		_frontRightMotor.setInverted(true); // <<<<<< Adjust this until robot drives forward when stick is forward
+		_frontRightMotor.setInverted(false); // <<<<<< Adjust this until robot drives forward when stick is forward
 		_leftSlave1.setInverted(InvertType.FollowMaster);
 		_rightSlave1.setInverted(InvertType.FollowMaster);
 
@@ -99,7 +99,7 @@ public class Robot extends TimedRobot {
 	 */
 	public void teleopPeriodic() {
         /* Gamepad processing */
-		double leftVal = -1.0 * _joyL.getY();	// Sign this so forward is posiPtive
+		double leftVal = 1.0 * _joyL.getY();	// Sign this so forward is posiPtive
 		double rightVal = -1.0 * _joyR.getY();       // Sign this so right is positive
         
         /* Deadband - within 10% joystick, make it zero */

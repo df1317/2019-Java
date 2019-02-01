@@ -64,6 +64,8 @@ public class Robot extends TimedRobot {
 
 	//Joystick button declarations
 	boolean joy2Trigger;
+	int joy3POV = joy3.getPOV();
+	
 
 	// This function is called once at the beginning during operator control
 	public void teleopInit() {
@@ -99,12 +101,14 @@ public class Robot extends TimedRobot {
 		double leftVal = 1.0 * joy2.getY();	// Sign this so forward is posiPtive
 		double rightVal = -1.0 * joy1.getY();       // Sign this so right is positive
 		double otherVal = joy3.getY();
+		double elevatorVal = 0;
 
 		//obtain button inputs
 		joy2Trigger = joy2.getRawButton(1);
 
-		//motor/pneumatic functions (commented out until we're actually able to test it)
-		//elevator.set(otherVal*0.5);
+		//additional motor/pneumatic functions
+		elevator.set(elevatorVal);
+
 
 
 
@@ -119,11 +123,17 @@ public class Robot extends TimedRobot {
 			leftVal = leftVal/2;
 			rightVal = rightVal/2;
 		}
+		if (joy3POV == 0) {
+			elevatorVal = 0.5;
+		}
+		if (joy3POV == 4) {
+			elevatorVal = -0.5;
+		}
 		/**
 		 * Print the joystick values to sign them, comment
 		 * out this line after checking the joystick directions. 
 		 */
-		System.out.println("JoyL:" + leftVal + "  joyR:" + rightVal );
+		System.out.println("JoyL:" + leftVal + "  joyR:" + rightVal + " joy3:" + otherVal + "elevatorVal: " + elevatorVal);
 		
         
 		/**

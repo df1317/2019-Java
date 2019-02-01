@@ -48,50 +48,53 @@ import com.ctre.phoenix.motorcontrol.can.*;
 
 public class Robot extends TimedRobot {
 	/* Master Talons for arcade drive */
-	WPI_TalonSRX _frontLeftMotor = new WPI_TalonSRX(1);
-	WPI_TalonSRX _frontRightMotor = new WPI_TalonSRX(3);
+	WPI_TalonSRX frontLeftMotor = new WPI_TalonSRX(1);
+	WPI_TalonSRX frontRightMotor = new WPI_TalonSRX(3);
 
 	/* Follower Talons + Victors for six motor drives */
-	WPI_TalonSRX _leftSlave1 = new WPI_TalonSRX(2);
-	WPI_TalonSRX _rightSlave1 = new WPI_TalonSRX(4);
+	WPI_TalonSRX leftSlave1 = new WPI_TalonSRX(2);
+	WPI_TalonSRX rightSlave1 = new WPI_TalonSRX(4);
 
     /* Construct drivetrain by providing master motor controllers */
-	DifferentialDrive _drive = new DifferentialDrive(_frontLeftMotor, _frontRightMotor);
+	DifferentialDrive drive = new DifferentialDrive(frontLeftMotor, frontRightMotor);
 
     /* Joystick for control */
-	Joystick _joyL = new Joystick(2);
-	Joystick _joyR = new Joystick(1);
+	Joystick joy2 = new Joystick(2);
+	Joystick joy1 = new Joystick(1);
+
+	boolean joyLTrigger;
 
 	/**
 	 * This function is called once at the beginning during operator control
 	 */
 	public void teleopInit() {
+
 		/* Factory Default all hardware to prevent unexpected behaviour */
-		_frontLeftMotor.configFactoryDefault();
-		_frontRightMotor.configFactoryDefault();
-		_leftSlave1.configFactoryDefault();
-		_rightSlave1.configFactoryDefault();
+		frontLeftMotor.configFactoryDefault();
+		frontRightMotor.configFactoryDefault();
+		leftSlave1.configFactoryDefault();
+		rightSlave1.configFactoryDefault();
 
 		/**
 		 * Take our extra motor controllers and have them
 		 * follow the Talons updated in arcadeDrive 
 		 */
-		_leftSlave1.follow(_frontLeftMotor);
-		_rightSlave1.follow(_frontRightMotor);
+		leftSlave1.follow(frontLeftMotor);
+		rightSlave1.follow(frontRightMotor);
 
 		/**
 		 * Drive robot forward and make sure all motors spin the correct way.
 		 * Toggle booleans accordingly.... 
 		 */
-		_frontLeftMotor.setInverted(false); // <<<<<< Adjust this until robot drives forward when stick is forward
-		_frontRightMotor.setInverted(false); // <<<<<< Adjust this until robot drives forward when stick is forward
-		_leftSlave1.setInverted(InvertType.FollowMaster);
-		_rightSlave1.setInverted(InvertType.FollowMaster);
+		frontLeftMotor.setInverted(false); // <<<<<< Adjust this until robot drives forward when stick is forward
+		frontRightMotor.setInverted(false); // <<<<<< Adjust this until robot drives forward when stick is forward
+		leftSlave1.setInverted(InvertType.FollowMaster);
+		rightSlave1.setInverted(InvertType.FollowMaster);
 
 		/* diff drive assumes (by default) that 
 			right side must be negative to move forward.
 			Change to 'false' so positive/green-LEDs moves robot forward  */
-		_drive.setRightSideInverted(false); // do not change this
+		drive.setRightSideInverted(false); // do not change this
 	}
 
 	/**
@@ -99,9 +102,11 @@ public class Robot extends TimedRobot {
 	 */
 	public void teleopPeriodic() {
         /* Gamepad processing */
-		double leftVal = 1.0 * _joyL.getY();	// Sign this so forward is posiPtive
-		double rightVal = -1.0 * _joyR.getY();       // Sign this so right is positive
-        
+		double leftVal = 1.0 * joy2.getY();	// Sign this so forward is posiPtive
+		double rightVal = -1.0 * joy1.getY();       // Sign this so right is positive
+		
+		joyLTrigger = joy2.getRawButton(1);
+
         /* Deadband - within 10% joystick, make it zero */
 		if (Math.abs(leftVal) < 0.10) {
 			leftVal = 0;
@@ -109,16 +114,20 @@ public class Robot extends TimedRobot {
 		if (Math.abs(rightVal) < 0.10) {
 			rightVal = 0;
 		}
-        
+        if(joyLTrigger) {
+			leftVal = leftVal/2;
+			rightVal = rightVal/2;
+		}
 		/**
 		 * Print the joystick values to sign them, comment
 		 * out this line after checking the joystick directions. 
 		 */
-        System.out.println("JoyL:" + leftVal + "  joyR:" + rightVal );
+		System.out.println("JoyL:" + leftVal + "  joyR:" + rightVal );
+		
         
 		/**
 		 * Drive the robot, 
 		 */
-		_drive.tankDrive(leftVal, rightVal);
+		drive.tankDrive(leftVal, rightVal);
 	}
 }

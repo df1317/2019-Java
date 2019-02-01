@@ -42,50 +42,44 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.can.*;
 
 public class Robot extends TimedRobot {
-	/* Master Talons for arcade drive */
+
+	//talon declaration
 	WPI_TalonSRX frontLeftMotor = new WPI_TalonSRX(1);
 	WPI_TalonSRX frontRightMotor = new WPI_TalonSRX(3);
-
-	/* Follower Talons + Victors for six motor drives */
 	WPI_TalonSRX leftSlave1 = new WPI_TalonSRX(2);
 	WPI_TalonSRX rightSlave1 = new WPI_TalonSRX(4);
+	WPI_TalonSRX elevator = new WPI_TalonSRX(5);
 
     /* Construct drivetrain by providing master motor controllers */
 	DifferentialDrive drive = new DifferentialDrive(frontLeftMotor, frontRightMotor);
 
-    /* Joystick for control */
-	Joystick joy2 = new Joystick(2);
+	//Joystick declaration
 	Joystick joy1 = new Joystick(1);
+	Joystick joy2 = new Joystick(2);
+	Joystick joy3 = new Joystick(3);
 
-	boolean joyLTrigger;
+	//Joystick button declarations
+	boolean joy2Trigger;
 
-	/**
-	 * This function is called once at the beginning during operator control
-	 */
+	// This function is called once at the beginning during operator control
 	public void teleopInit() {
 
-		/* Factory Default all hardware to prevent unexpected behaviour */
+		// Factory Default all hardware to prevent unexpected behaviour
 		frontLeftMotor.configFactoryDefault();
 		frontRightMotor.configFactoryDefault();
 		leftSlave1.configFactoryDefault();
 		rightSlave1.configFactoryDefault();
 
-		/**
-		 * Take our extra motor controllers and have them
-		 * follow the Talons updated in arcadeDrive 
-		 */
+		//set the slave talons to follow the main talons
 		leftSlave1.follow(frontLeftMotor);
 		rightSlave1.follow(frontRightMotor);
 
-		/**
-		 * Drive robot forward and make sure all motors spin the correct way.
-		 * Toggle booleans accordingly.... 
-		 */
+
+		//toggle the functions below to make sure that the wheels are turning the correct way
 		frontLeftMotor.setInverted(false); // <<<<<< Adjust this until robot drives forward when stick is forward
 		frontRightMotor.setInverted(false); // <<<<<< Adjust this until robot drives forward when stick is forward
 		leftSlave1.setInverted(InvertType.FollowMaster);
@@ -101,11 +95,18 @@ public class Robot extends TimedRobot {
 	 * This function is called periodically during operator control
 	 */
 	public void teleopPeriodic() {
-        /* Gamepad processing */
+        //Aquisition of Joystick values
 		double leftVal = 1.0 * joy2.getY();	// Sign this so forward is posiPtive
 		double rightVal = -1.0 * joy1.getY();       // Sign this so right is positive
-		
-		joyLTrigger = joy2.getRawButton(1);
+		double otherVal = joy3.getY();
+
+		//obtain button inputs
+		joy2Trigger = joy2.getRawButton(1);
+
+		//motor/pneumatic functions (commented out until we're actually able to test it)
+		//elevator.set(otherVal*0.5);
+
+
 
         /* Deadband - within 10% joystick, make it zero */
 		if (Math.abs(leftVal) < 0.10) {
@@ -114,7 +115,7 @@ public class Robot extends TimedRobot {
 		if (Math.abs(rightVal) < 0.10) {
 			rightVal = 0;
 		}
-        if(joyLTrigger) {
+        if(joy2Trigger) {
 			leftVal = leftVal/2;
 			rightVal = rightVal/2;
 		}

@@ -32,11 +32,8 @@
  * The example uses two master motor controllers passed into WPI's DifferentialDrive Class 
  * to control the remaining 4 Talons (Follower Mode) to provide a simple Tank Arcade Drive 
  * configuration.
- *
- * Controls:
- * Left Joystick Y-Axis: Drive robot in forward and reverse direction
- * Right Joystick X-Axis: Turn robot in right and left direction
  */
+
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -65,20 +62,23 @@ public class Robot extends TimedRobot {
 	DoubleSolenoid solenoidBack1 = new DoubleSolenoid(5, 6);
 	DoubleSolenoid solenoidBack2 = new DoubleSolenoid(7, 8);
 
+
     /* Construct drivetrain by providing master motor controllers */
 	DifferentialDrive drive = new DifferentialDrive(frontLeftMotor, frontRightMotor);
 
 	//Joystick declaration
-	Joystick joy1 = new Joystick(1);
-	Joystick joy2 = new Joystick(2);
-	Joystick joy3 = new Joystick(3);
+	Joystick joyR = new Joystick(1);
+	Joystick joyL = new Joystick(2);
+	Joystick joyE = new Joystick(0);
 
 	//Joystick button declarations
-	boolean joy2Trigger;
-	boolean joy3SwifferIn;
-	boolean joy3SwifferOut;
-	int joy3POV = joy3.getPOV();
-	int joy1POV = joy1.getPOV();
+	boolean joyLTrigger;
+	boolean joyESwifferIn;
+	boolean joyESwifferOut;
+	boolean joyEFrontpneu;
+	boolean joyEBackpneu;
+	int joy3POV = joyE.getPOV();
+	int joy1POV = joyR.getPOV();
 	
 
 	// This function is called once at the beginning during operator control
@@ -112,16 +112,19 @@ public class Robot extends TimedRobot {
 	 */
 	public void teleopPeriodic() {
         //Aquisition of Joystick values
-		double leftVal = 1.0 * joy2.getY();	// Sign this so forward is posiPtive
-		double rightVal = -1.0 * joy1.getY();       // Sign this so right is positive
-		double otherVal = joy3.getY();
+		double leftVal = 1.0 * joyL.getY();	// Sign this so forward is posiPtive
+		double rightVal = -1.0 * joyR.getY();       // Sign this so right is positive
+		double otherVal = joyE.getY();
 		double elevatorVal = 0;
 		double swifferVal = 0;
 
+
 		//obtain button inputs
-		joy2Trigger = joy2.getRawButton(1);
-		joy3SwifferIn = joy3.getRawButton(2);
-		joy3SwifferOut = joy3.getRawButton(1);
+		joyLTrigger = joyL.getRawButton(1);
+		joyESwifferIn = joyE.getRawButton(2);
+		joyESwifferOut = joyE.getRawButton(1);
+		joyEFrontpneu = joyE.getRawButton(5);
+		joyEBackpneu = joyE.getRawButton(3);
 
 
 		//additional motor/pneumatic functions
@@ -137,7 +140,7 @@ public class Robot extends TimedRobot {
 			rightVal = 0;
 		}
 		//slow the robot whilst driving
-        if(joy2Trigger) {
+        if(joyLTrigger) {
 			leftVal = leftVal/2;
 			rightVal = rightVal/2;
 		}
@@ -149,12 +152,23 @@ public class Robot extends TimedRobot {
 			elevatorVal = -0.5;
 		}
 		//swiffer in/out control
-		if(joy3SwifferIn) {
+		if(joyESwifferIn) {
 			swifferVal = 0.5;
 		}
-		if(joy3SwifferOut) {
+		if(joyESwifferOut) {
 			swifferVal = -0.5;
 		}
+		//button based pneumatic control
+		if(joyEFrontpneu) {
+			solenoidFront1.set(DoubleSolenoid.Value.kForward);
+			solenoidFront2.set(DoubleSolenoid.Value.kForward);
+		}
+		if(joyEBackpneu) {
+			solenoidBack1.set(DoubleSolenoid.Value.kForward);
+			solenoidBack2.set(DoubleSolenoid.Value.kForward);
+		}
+
+
 		
 
 		//print the values for different variables

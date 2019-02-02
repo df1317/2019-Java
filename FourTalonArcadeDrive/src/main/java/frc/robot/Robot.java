@@ -53,6 +53,10 @@ public class Robot extends TimedRobot {
 	WPI_TalonSRX leftSlave1 = new WPI_TalonSRX(2);
 	WPI_TalonSRX rightSlave1 = new WPI_TalonSRX(4);
 	WPI_TalonSRX elevator = new WPI_TalonSRX(5);
+	WPI_TalonSRX swiffer = new WPI_TalonSRX(6);
+	WPI_TalonSRX swifferupdown = new WPI_TalonSRX(7);
+	WPI_TalonSRX swifferupdownSlave = new WPI_TalonSRX(8);
+	//when switching these over to victors, just remember that it's WPI_VictorSPX
 
     /* Construct drivetrain by providing master motor controllers */
 	DifferentialDrive drive = new DifferentialDrive(frontLeftMotor, frontRightMotor);
@@ -65,6 +69,7 @@ public class Robot extends TimedRobot {
 	//Joystick button declarations
 	boolean joy2Trigger;
 	int joy3POV = joy3.getPOV();
+	int joy1POV = joy1.getPOV();
 	
 
 	// This function is called once at the beginning during operator control
@@ -79,6 +84,7 @@ public class Robot extends TimedRobot {
 		//set the slave talons to follow the main talons
 		leftSlave1.follow(frontLeftMotor);
 		rightSlave1.follow(frontRightMotor);
+		swifferupdownSlave.follow(swifferupdown);
 
 
 		//toggle the functions below to make sure that the wheels are turning the correct way
@@ -102,43 +108,43 @@ public class Robot extends TimedRobot {
 		double rightVal = -1.0 * joy1.getY();       // Sign this so right is positive
 		double otherVal = joy3.getY();
 		double elevatorVal = 0;
+		double swifferVal = 0;
 
 		//obtain button inputs
 		joy2Trigger = joy2.getRawButton(1);
 
+
 		//additional motor/pneumatic functions
 		elevator.set(elevatorVal);
+		swiffer.set(swifferVal);
+		swifferupdown.set(otherVal);
 
-
-
-
-        /* Deadband - within 10% joystick, make it zero */
+        // Deadband - within 10% joystick, make it zero
 		if (Math.abs(leftVal) < 0.10) {
 			leftVal = 0;
 		}
 		if (Math.abs(rightVal) < 0.10) {
 			rightVal = 0;
 		}
+		//slow the robot whilst driving
         if(joy2Trigger) {
 			leftVal = leftVal/2;
 			rightVal = rightVal/2;
 		}
+		//elevator up/down control
 		if (joy3POV == 0) {
 			elevatorVal = 0.5;
 		}
 		if (joy3POV == 4) {
 			elevatorVal = -0.5;
 		}
-		/**
-		 * Print the joystick values to sign them, comment
-		 * out this line after checking the joystick directions. 
-		 */
+
+
+		//print the values for different variables
 		System.out.println("JoyL:" + leftVal + "  joyR:" + rightVal + " joy3:" + otherVal + "elevatorVal: " + elevatorVal);
 		
         
-		/**
-		 * Drive the robot, 
-		 */
+		//drive the diggity dang robit
 		drive.tankDrive(leftVal, rightVal);
 	}
 }

@@ -68,6 +68,8 @@ public class Robot extends TimedRobot {
 
 	//Joystick button declarations
 	boolean joy2Trigger;
+	boolean joy3SwifferIn;
+	boolean joy3SwifferOut;
 	int joy3POV = joy3.getPOV();
 	int joy1POV = joy1.getPOV();
 	
@@ -112,6 +114,8 @@ public class Robot extends TimedRobot {
 
 		//obtain button inputs
 		joy2Trigger = joy2.getRawButton(1);
+		joy3SwifferIn = joy3.getRawButton(5);
+		joy3SwifferOut = joy3.getRawButton(3);
 
 
 		//additional motor/pneumatic functions
@@ -138,6 +142,14 @@ public class Robot extends TimedRobot {
 		if (joy3POV == 4) {
 			elevatorVal = -0.5;
 		}
+		//swiffer in/out control
+		if(joy3SwifferIn) {
+			swifferVal = 0.5;
+		}
+		if(joy3SwifferOut) {
+			swifferVal = -0.5;
+		}
+		
 
 
 		//print the values for different variables

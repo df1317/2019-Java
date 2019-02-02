@@ -114,8 +114,8 @@ public class Robot extends TimedRobot {
 
 		//obtain button inputs
 		joy2Trigger = joy2.getRawButton(1);
-		joy3SwifferIn = joy3.getRawButton(5);
-		joy3SwifferOut = joy3.getRawButton(3);
+		joy3SwifferIn = joy3.getRawButton(2);
+		joy3SwifferOut = joy3.getRawButton(1);
 
 
 		//additional motor/pneumatic functions

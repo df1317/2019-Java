@@ -41,6 +41,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.can.*;
@@ -57,6 +58,12 @@ public class Robot extends TimedRobot {
 	WPI_TalonSRX swifferupdown = new WPI_TalonSRX(7);
 	WPI_TalonSRX swifferupdownSlave = new WPI_TalonSRX(8);
 	//when switching these over to victors, just remember that it's WPI_VictorSPX
+
+	//pneumatic delarations
+	DoubleSolenoid solenoidFront1 = new DoubleSolenoid(1, 2);
+	DoubleSolenoid solenoidFront2 = new DoubleSolenoid(3, 4);
+	DoubleSolenoid solenoidBack1 = new DoubleSolenoid(5, 6);
+	DoubleSolenoid solenoidBack2 = new DoubleSolenoid(7, 8);
 
     /* Construct drivetrain by providing master motor controllers */
 	DifferentialDrive drive = new DifferentialDrive(frontLeftMotor, frontRightMotor);
@@ -87,7 +94,6 @@ public class Robot extends TimedRobot {
 		leftSlave1.follow(frontLeftMotor);
 		rightSlave1.follow(frontRightMotor);
 		swifferupdownSlave.follow(swifferupdown);
-
 
 		//toggle the functions below to make sure that the wheels are turning the correct way
 		frontLeftMotor.setInverted(false); // <<<<<< Adjust this until robot drives forward when stick is forward
@@ -151,9 +157,8 @@ public class Robot extends TimedRobot {
 		}
 		
 
-
 		//print the values for different variables
-		System.out.println("JoyL:" + leftVal + "  joyR:" + rightVal + " joy3:" + otherVal + "elevatorVal: " + elevatorVal);
+		System.out.println("JoyL:" + leftVal + "  joyR:" + rightVal + " joy3: " + otherVal + "elevatorVal: " + elevatorVal + "swifferVal: " + swifferVal);
 		
         
 		//drive the diggity dang robit

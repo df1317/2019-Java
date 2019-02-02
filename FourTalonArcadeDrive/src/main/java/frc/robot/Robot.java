@@ -36,14 +36,19 @@
 
 package frc.robot;
 
+//imports, duh
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.can.*;
 
 public class Robot extends TimedRobot {
+
+
+//_______________Declarations_______________
 
 	//talon declaration
 	WPI_TalonSRX frontLeftMotor = new WPI_TalonSRX(1);
@@ -54,6 +59,7 @@ public class Robot extends TimedRobot {
 	WPI_TalonSRX swiffer = new WPI_TalonSRX(6);
 	WPI_TalonSRX swifferupdown = new WPI_TalonSRX(7);
 	WPI_TalonSRX swifferupdownSlave = new WPI_TalonSRX(8);
+	Relay test;
 	//when switching these over to victors, just remember that it's WPI_VictorSPX
 
 	//pneumatic delarations
@@ -63,7 +69,7 @@ public class Robot extends TimedRobot {
 	DoubleSolenoid solenoidBack2 = new DoubleSolenoid(7, 8);
 
 
-    /* Construct drivetrain by providing master motor controllers */
+    // Construct drivetrain by providing master motor controllers
 	DifferentialDrive drive = new DifferentialDrive(frontLeftMotor, frontRightMotor);
 
 	//Joystick declaration
@@ -77,8 +83,15 @@ public class Robot extends TimedRobot {
 	boolean joyESwifferOut;
 	boolean joyEFrontpneu;
 	boolean joyEBackpneu;
-	int joy3POV = joyE.getPOV();
-	int joy1POV = joyR.getPOV();
+	int joyEPOV = joyE.getPOV();
+	int joyRPOV = joyR.getPOV(); //not currently in use
+
+	//Variable declarations regarding the joysticks
+	double leftVal = 1.0 * joyL.getY();	// Sign this so forward is positive
+	double rightVal = -1.0 * joyR.getY(); // Sign this so right is positive
+	double otherVal = joyE.getY();
+	double elevatorVal = 0;
+	double swifferVal = 0;
 	
 
 	// This function is called once at the beginning during operator control
@@ -107,19 +120,10 @@ public class Robot extends TimedRobot {
 		drive.setRightSideInverted(false); // do not change this
 	}
 
-	/**
-	 * This function is called periodically during operator control
-	 */
+	// This function is called periodically during operator control
 	public void teleopPeriodic() {
-        //Aquisition of Joystick values
-		double leftVal = 1.0 * joyL.getY();	// Sign this so forward is posiPtive
-		double rightVal = -1.0 * joyR.getY();       // Sign this so right is positive
-		double otherVal = joyE.getY();
-		double elevatorVal = 0;
-		double swifferVal = 0;
 
-
-		//obtain button inputs
+		//Declare and obtain button inputs
 		joyLTrigger = joyL.getRawButton(1);
 		joyESwifferIn = joyE.getRawButton(2);
 		joyESwifferOut = joyE.getRawButton(1);
@@ -127,11 +131,13 @@ public class Robot extends TimedRobot {
 		joyEBackpneu = joyE.getRawButton(3);
 
 
-		//additional motor/pneumatic functions
+		//_____Motor and pneumatic control below_______
+		//any simple .set code
 		elevator.set(elevatorVal);
 		swiffer.set(swifferVal);
 		swifferupdown.set(otherVal);
 
+		//Driving
         // Deadband - within 10% joystick, make it zero
 		if (Math.abs(leftVal) < 0.10) {
 			leftVal = 0;
@@ -139,18 +145,25 @@ public class Robot extends TimedRobot {
 		if (Math.abs(rightVal) < 0.10) {
 			rightVal = 0;
 		}
+
 		//slow the robot whilst driving
         if(joyLTrigger) {
 			leftVal = leftVal/2;
 			rightVal = rightVal/2;
 		}
+
+		//drive the diggity dang robit
+		drive.tankDrive(leftVal, rightVal);	
+
+		//elevator/swiffer control
 		//elevator up/down control
-		if (joy3POV == 0) {
+		if (joyEPOV == 0) {
 			elevatorVal = 0.5;
 		}
-		if (joy3POV == 4) {
+		if (joyEPOV == 4) {
 			elevatorVal = -0.5;
 		}
+
 		//swiffer in/out control
 		if(joyESwifferIn) {
 			swifferVal = 0.5;
@@ -158,24 +171,28 @@ public class Robot extends TimedRobot {
 		if(joyESwifferOut) {
 			swifferVal = -0.5;
 		}
+
+		//everything pneumatic
 		//button based pneumatic control
 		if(joyEFrontpneu) {
 			solenoidFront1.set(DoubleSolenoid.Value.kForward);
 			solenoidFront2.set(DoubleSolenoid.Value.kForward);
 		}
+		else {
+			solenoidFront1.set(DoubleSolenoid.Value.kReverse);
+			solenoidFront2.set(DoubleSolenoid.Value.kReverse);
+		}
 		if(joyEBackpneu) {
 			solenoidBack1.set(DoubleSolenoid.Value.kForward);
 			solenoidBack2.set(DoubleSolenoid.Value.kForward);
 		}
+		else {
+			solenoidBack1.set(DoubleSolenoid.Value.kReverse);
+			solenoidBack2.set(DoubleSolenoid.Value.kReverse);
+		}		
 
-
-		
-
-		//print the values for different variables
+		//print the values for different variables for bugtesting
 		System.out.println("JoyL:" + leftVal + "  joyR:" + rightVal + " joy3: " + otherVal + "elevatorVal: " + elevatorVal + "swifferVal: " + swifferVal);
 		
-        
-		//drive the diggity dang robit
-		drive.tankDrive(leftVal, rightVal);
 	}
 }

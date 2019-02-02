@@ -59,7 +59,7 @@ public class Robot extends TimedRobot {
 	WPI_TalonSRX swiffer = new WPI_TalonSRX(6);
 	WPI_TalonSRX swifferupdown = new WPI_TalonSRX(7);
 	WPI_TalonSRX swifferupdownSlave = new WPI_TalonSRX(8);
-	Relay test;
+	Relay spike1;
 	//when switching these over to victors, just remember that it's WPI_VictorSPX
 
 	//pneumatic delarations
@@ -83,6 +83,8 @@ public class Robot extends TimedRobot {
 	boolean joyESwifferOut;
 	boolean joyEFrontpneu;
 	boolean joyEBackpneu;
+	boolean joyRspikeF;
+	boolean joyRspikeB;
 	int joyEPOV = joyE.getPOV();
 	int joyRPOV = joyR.getPOV(); //not currently in use
 
@@ -129,6 +131,8 @@ public class Robot extends TimedRobot {
 		joyESwifferOut = joyE.getRawButton(1);
 		joyEFrontpneu = joyE.getRawButton(5);
 		joyEBackpneu = joyE.getRawButton(3);
+		joyRspikeF = joyR.getRawButton(6);
+		joyRspikeB = joyR.getRawButton(4);
 
 
 		//_____Motor and pneumatic control below_______
@@ -189,7 +193,16 @@ public class Robot extends TimedRobot {
 		else {
 			solenoidBack1.set(DoubleSolenoid.Value.kReverse);
 			solenoidBack2.set(DoubleSolenoid.Value.kReverse);
-		}		
+		}	
+		
+		//spike controller for hatches
+		if(joyRspikeF) {
+			spike1.set(Relay.Value.kForward);
+		}
+		if(joyRspikeB) {
+			spike1.set(Relay.Value.kReverse);
+		}
+		
 
 		//print the values for different variables for bugtesting
 		System.out.println("JoyL:" + leftVal + "  joyR:" + rightVal + " joy3: " + otherVal + "elevatorVal: " + elevatorVal + "swifferVal: " + swifferVal);

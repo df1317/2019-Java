@@ -90,6 +90,8 @@ public class Robot extends TimedRobot {
 
 	//Joystick button toggles
 	boolean speedToggle;
+	boolean frontpneuToggle;
+	boolean backpneuToggle;
 
 	//Variable declarations regarding the joysticks
 	double leftVal = 1.0 * joyL.getY();	// Sign this so forward is positive
@@ -132,8 +134,8 @@ public class Robot extends TimedRobot {
 		joyLTrigger = joyL.getTriggerPressed();
 		joyESwifferIn = joyE.getRawButton(2);
 		joyESwifferOut = joyE.getRawButton(1);
-		joyEFrontpneu = joyE.getRawButton(5);
-		joyEBackpneu = joyE.getRawButton(3);
+		joyEFrontpneu = joyE.getRawButtonPressed(5);
+		joyEBackpneu = joyE.getRawButtonPressed(3);
 		joyRspikeF = joyR.getRawButton(6);
 		joyRspikeB = joyR.getRawButton(4);
 
@@ -184,6 +186,12 @@ public class Robot extends TimedRobot {
 		//everything pneumatic
 		//button based pneumatic control
 		if(joyEFrontpneu) {
+			frontpneuToggle = !frontpneuToggle;
+		}
+		if(joyEBackpneu) {
+			backpneuToggle = !backpneuToggle;
+		}
+		if(frontpneuToggle) {
 			solenoidFront1.set(DoubleSolenoid.Value.kForward);
 			solenoidFront2.set(DoubleSolenoid.Value.kForward);
 		}
@@ -191,7 +199,7 @@ public class Robot extends TimedRobot {
 			solenoidFront1.set(DoubleSolenoid.Value.kReverse);
 			solenoidFront2.set(DoubleSolenoid.Value.kReverse);
 		}
-		if(joyEBackpneu) {
+		if(backpneuToggle) {
 			solenoidBack1.set(DoubleSolenoid.Value.kForward);
 			solenoidBack2.set(DoubleSolenoid.Value.kForward);
 		}

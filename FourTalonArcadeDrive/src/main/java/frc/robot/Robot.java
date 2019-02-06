@@ -88,6 +88,9 @@ public class Robot extends TimedRobot {
 	int joyEPOV = joyE.getPOV();
 	int joyRPOV = joyR.getPOV(); //not currently in use
 
+	//Joystick button toggles
+	boolean speedToggle;
+
 	//Variable declarations regarding the joysticks
 	double leftVal = 1.0 * joyL.getY();	// Sign this so forward is positive
 	double rightVal = -1.0 * joyR.getY(); // Sign this so right is positive
@@ -126,14 +129,13 @@ public class Robot extends TimedRobot {
 	public void teleopPeriodic() {
 
 		//Declare and obtain button inputs
-		joyLTrigger = joyL.getRawButton(1);
+		joyLTrigger = joyL.getTriggerPressed();
 		joyESwifferIn = joyE.getRawButton(2);
 		joyESwifferOut = joyE.getRawButton(1);
 		joyEFrontpneu = joyE.getRawButton(5);
 		joyEBackpneu = joyE.getRawButton(3);
 		joyRspikeF = joyR.getRawButton(6);
 		joyRspikeB = joyR.getRawButton(4);
-
 
 		//_____Motor and pneumatic control below_______
 		//any simple .set code
@@ -152,8 +154,11 @@ public class Robot extends TimedRobot {
 
 		//slow the robot whilst driving
         if(joyLTrigger) {
-			leftVal = leftVal/2;
-			rightVal = rightVal/2;
+			speedToggle = !speedToggle;
+		}
+		if(speedToggle) {
+		leftVal = leftVal/2;
+		rightVal = rightVal/2;
 		}
 
 		//drive the diggity dang robit

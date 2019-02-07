@@ -64,8 +64,8 @@ public class Robot extends TimedRobot {
 	Relay spike1;
 
 	//pneumatic delarations
-	DoubleSolenoid solenoidFront = new DoubleSolenoid(1, 2);
-	DoubleSolenoid solenoidBack = new DoubleSolenoid(3, 4);
+	DoubleSolenoid solenoidFront = new DoubleSolenoid(0, 1);
+	DoubleSolenoid solenoidBack = new DoubleSolenoid(6, 7);
 
     // Construct drivetrain by providing master motor controllers
 	DifferentialDrive drive = new DifferentialDrive(frontLeftMotor, frontRightMotor);
@@ -99,8 +99,8 @@ public class Robot extends TimedRobot {
 	double swifferVal = 0;
 	
 	//camera declarations (commented out for now)
-	//private AxisCamera cam1 = CameraServer.getInstance().addAxisCamera(10.13.17.11);
-	//private AxisCamera camR = CameraServer.getInstance().addAxisCamera(1.1.1.1);
+	private AxisCamera cam1 = CameraServer.getInstance().addAxisCamera("10.13.17.11");
+	private AxisCamera camR = CameraServer.getInstance().addAxisCamera("10.13.17.12");
 
 	// This function is called once at the beginning during operator control
 	public void teleopInit() {

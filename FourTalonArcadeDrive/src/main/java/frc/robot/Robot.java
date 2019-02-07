@@ -40,6 +40,8 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Relay;
+import edu.wpi.cscore.AxisCamera;
+import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import com.ctre.phoenix.motorcontrol.InvertType;
@@ -51,23 +53,19 @@ public class Robot extends TimedRobot {
 //_______________Declarations_______________
 
 	//talon declaration
-	WPI_TalonSRX frontLeftMotor = new WPI_TalonSRX(1);
-	WPI_TalonSRX frontRightMotor = new WPI_TalonSRX(3);
-	WPI_TalonSRX leftSlave1 = new WPI_TalonSRX(2);
-	WPI_TalonSRX rightSlave1 = new WPI_TalonSRX(4);
-	WPI_TalonSRX elevator = new WPI_TalonSRX(5);
-	WPI_TalonSRX swiffer = new WPI_TalonSRX(6);
-	WPI_TalonSRX swifferupdown = new WPI_TalonSRX(7);
-	WPI_TalonSRX swifferupdownSlave = new WPI_TalonSRX(8);
+	WPI_VictorSPX frontLeftMotor = new WPI_VictorSPX(1);
+	WPI_VictorSPX frontRightMotor = new WPI_VictorSPX(3);
+	WPI_VictorSPX leftSlave1 = new WPI_VictorSPX(2);
+	WPI_VictorSPX rightSlave1 = new WPI_VictorSPX(4);
+	WPI_VictorSPX elevator = new WPI_VictorSPX(5);
+	WPI_VictorSPX swiffer = new WPI_VictorSPX(6);
+	WPI_VictorSPX swifferupdown = new WPI_VictorSPX(7);
+	WPI_VictorSPX swifferupdownSlave = new WPI_VictorSPX(8);
 	Relay spike1;
-	//when switching these over to victors, just remember that it's WPI_VictorSPX
 
 	//pneumatic delarations
-	DoubleSolenoid solenoidFront1 = new DoubleSolenoid(1, 2);
-	DoubleSolenoid solenoidFront2 = new DoubleSolenoid(3, 4);
-	DoubleSolenoid solenoidBack1 = new DoubleSolenoid(5, 6);
-	DoubleSolenoid solenoidBack2 = new DoubleSolenoid(7, 8);
-
+	DoubleSolenoid solenoidFront = new DoubleSolenoid(1, 2);
+	DoubleSolenoid solenoidBack = new DoubleSolenoid(3, 4);
 
     // Construct drivetrain by providing master motor controllers
 	DifferentialDrive drive = new DifferentialDrive(frontLeftMotor, frontRightMotor);
@@ -100,6 +98,9 @@ public class Robot extends TimedRobot {
 	double elevatorVal = 0;
 	double swifferVal = 0;
 	
+	//camera declarations (commented out for now)
+	//private AxisCamera cam1 = CameraServer.getInstance().addAxisCamera(10.13.17.11);
+	//private AxisCamera camR = CameraServer.getInstance().addAxisCamera(1.1.1.1);
 
 	// This function is called once at the beginning during operator control
 	public void teleopInit() {
@@ -109,6 +110,9 @@ public class Robot extends TimedRobot {
 		frontRightMotor.configFactoryDefault();
 		leftSlave1.configFactoryDefault();
 		rightSlave1.configFactoryDefault();
+		elevator.configFactoryDefault();
+		swiffer.configFactoryDefault();
+		swifferupdown.configFactoryDefault();
 
 		//set the slave talons to follow the main talons
 		leftSlave1.follow(frontLeftMotor);
@@ -192,20 +196,16 @@ public class Robot extends TimedRobot {
 			backpneuToggle = !backpneuToggle;
 		}
 		if(frontpneuToggle) {
-			solenoidFront1.set(DoubleSolenoid.Value.kForward);
-			solenoidFront2.set(DoubleSolenoid.Value.kForward);
+			solenoidFront.set(DoubleSolenoid.Value.kForward);
 		}
 		else {
-			solenoidFront1.set(DoubleSolenoid.Value.kReverse);
-			solenoidFront2.set(DoubleSolenoid.Value.kReverse);
+			solenoidFront.set(DoubleSolenoid.Value.kReverse);
 		}
 		if(backpneuToggle) {
-			solenoidBack1.set(DoubleSolenoid.Value.kForward);
-			solenoidBack2.set(DoubleSolenoid.Value.kForward);
+			solenoidBack.set(DoubleSolenoid.Value.kForward);
 		}
 		else {
-			solenoidBack1.set(DoubleSolenoid.Value.kReverse);
-			solenoidBack2.set(DoubleSolenoid.Value.kReverse);
+			solenoidBack.set(DoubleSolenoid.Value.kReverse);
 		}	
 		
 		//spike controller for hatches

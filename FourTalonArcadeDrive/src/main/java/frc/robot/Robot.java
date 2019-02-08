@@ -44,10 +44,28 @@ import edu.wpi.cscore.AxisCamera;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.can.*;
 
 public class Robot extends TimedRobot {
+	/*
+	ID 0 = power distribution panel
+	ID 1 = left 1
+	ID 2 = left 2
+	ID 3 = right 1
+	ID 4 = right 2
+	ID 5 = swiffer actuactor
+	ID 6 = swiffer 1
+	ID 7 = swiffer 2
+	ID 8 = elevator
+	ID 9 = ball shooter
+	ID 10 = pcm (pneu control moduel)
+	spike does hatch collector
+	*/
 
 
 //_______________Declarations_______________
@@ -57,11 +75,12 @@ public class Robot extends TimedRobot {
 	WPI_VictorSPX frontRightMotor = new WPI_VictorSPX(3);
 	WPI_VictorSPX leftSlave1 = new WPI_VictorSPX(2);
 	WPI_VictorSPX rightSlave1 = new WPI_VictorSPX(4);
-	WPI_VictorSPX elevator = new WPI_VictorSPX(5);
-	WPI_VictorSPX swiffer = new WPI_VictorSPX(6);
-	WPI_VictorSPX swifferupdown = new WPI_VictorSPX(7);
-	WPI_VictorSPX swifferupdownSlave = new WPI_VictorSPX(8);
-	Relay spike1;
+	WPI_VictorSPX elevator = new WPI_VictorSPX(8);
+	WPI_VictorSPX swiffer = new WPI_VictorSPX(5);
+	WPI_VictorSPX swifferupdown = new WPI_VictorSPX(6);
+	WPI_VictorSPX swifferupdownSlave = new WPI_VictorSPX(7);
+	WPI_VictorSPX ballShooter = new WPI_VictorSPX(9);
+	Relay spikeHatchCollector;
 
 	//pneumatic delarations
 	DoubleSolenoid solenoidFront = new DoubleSolenoid(0, 1);
@@ -71,9 +90,10 @@ public class Robot extends TimedRobot {
 	DifferentialDrive drive = new DifferentialDrive(frontLeftMotor, frontRightMotor);
 
 	//Joystick declaration
-	Joystick joyR = new Joystick(1);
-	Joystick joyL = new Joystick(2);
 	Joystick joyE = new Joystick(0);
+	Joystick joyL = new Joystick(1);
+	Joystick joyR = new Joystick(2);
+
 
 	//Joystick button declarations
 	boolean joyLTrigger;
@@ -134,6 +154,12 @@ public class Robot extends TimedRobot {
 	// This function is called periodically during operator control
 	public void teleopPeriodic() {
 
+		//Put info on the smartdashboard
+		SmartDashboard.putNumber("Left Joystick Y value", joyL.getY());
+		SmartDashboard.putNumber("Right Joystick Y value", joyR.getY());
+		SmartDashboard.putNumber("Extra Joystick Y value", joyE.getY());
+		
+
 		//Declare and obtain button inputs
 		joyLTrigger = joyL.getTriggerPressed();
 		joyESwifferIn = joyE.getRawButton(2);
@@ -150,7 +176,9 @@ public class Robot extends TimedRobot {
 		swifferupdown.set(otherVal);
 
 		//Driving
-        // Deadband - within 10% joystick, make it zero
+		// Deadband - within 10% joystick, make it zero
+
+
 		if (Math.abs(leftVal) < 0.10) {
 			leftVal = 0;
 		}
@@ -210,10 +238,10 @@ public class Robot extends TimedRobot {
 		
 		//spike controller for hatches
 		if(joyRspikeF) {
-			spike1.set(Relay.Value.kForward);
+			spikeHatchCollector.set(Relay.Value.kForward);
 		}
 		if(joyRspikeB) {
-			spike1.set(Relay.Value.kReverse);
+			spikeHatchCollector.set(Relay.Value.kReverse);
 		}
 		
 

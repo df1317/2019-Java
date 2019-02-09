@@ -120,8 +120,7 @@ public class Robot extends TimedRobot {
 	//camera declarations (commented out for now)
 	//private AxisCamera cam1 = CameraServer.getInstance().addAxisCamera("10.13.17.11");
 	//private AxisCamera cam2 = CameraServer.getInstance().addAxisCamera("10.13.17.12");
-
-
+	
 	// This function is called once at the beginning during operator control
 	public void teleopInit() {
 
@@ -162,8 +161,7 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putBoolean("Front Pnuematics", joyEFrontpneu == true);
 		SmartDashboard.putBoolean("Back Pnuematics", joyEBackpneu == true);
 		*/
-		Shuffleboard.getTab("SmartDashboard")
-		.add("Left Joystick",joyL.getY());
+		SmartDashboard.putNumber("test", 0.12);
 		
 
 		//Declare and obtain button inputs

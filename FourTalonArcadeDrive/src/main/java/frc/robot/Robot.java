@@ -104,7 +104,6 @@ public class Robot extends TimedRobot {
 	boolean joyRspikeF;
 	boolean joyRspikeB;
 	int joyEPOV = joyE.getPOV();
-	int joyRPOV = joyR.getPOV(); //not currently in use
 
 	//Joystick button toggles
 	boolean speedToggle;
@@ -119,8 +118,9 @@ public class Robot extends TimedRobot {
 	double swifferVal = 0;
 	
 	//camera declarations (commented out for now)
-	private AxisCamera cam1 = CameraServer.getInstance().addAxisCamera("10.13.17.11");
-	private AxisCamera camR = CameraServer.getInstance().addAxisCamera("10.13.17.12");
+	//private AxisCamera cam1 = CameraServer.getInstance().addAxisCamera("10.13.17.11");
+	//private AxisCamera cam2 = CameraServer.getInstance().addAxisCamera("10.13.17.12");
+
 
 	// This function is called once at the beginning during operator control
 	public void teleopInit() {
@@ -155,9 +155,15 @@ public class Robot extends TimedRobot {
 	public void teleopPeriodic() {
 
 		//Put info on the smartdashboard
+		/*
 		SmartDashboard.putNumber("Left Joystick Y value", joyL.getY());
 		SmartDashboard.putNumber("Right Joystick Y value", joyR.getY());
 		SmartDashboard.putNumber("Extra Joystick Y value", joyE.getY());
+		SmartDashboard.putBoolean("Front Pnuematics", joyEFrontpneu == true);
+		SmartDashboard.putBoolean("Back Pnuematics", joyEBackpneu == true);
+		*/
+		Shuffleboard.getTab("SmartDashboard")
+		.add("Left Joystick",joyL.getY());
 		
 
 		//Declare and obtain button inputs

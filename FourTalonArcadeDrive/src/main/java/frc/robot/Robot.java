@@ -120,10 +120,14 @@ public class Robot extends TimedRobot {
 	//camera declarations (commented out for now)
 	//private AxisCamera cam1 = CameraServer.getInstance().addAxisCamera("10.13.17.11");
 	//private AxisCamera cam2 = CameraServer.getInstance().addAxisCamera("10.13.17.12");
+	private String[] hosts = {"10.13.17.11", "10.13.17.12"};
+	private AxisCamera cams = CameraServer.getInstance().addAxisCamera("cams", hosts);
 
 
 	// This function is called once at the beginning during operator control
 	public void teleopInit() {
+
+		//cam1 = CameraServer.getInstance().
 
 		// Factory Default all hardware to prevent unexpected behaviour
 		frontLeftMotor.configFactoryDefault();

@@ -97,6 +97,7 @@ public class Robot extends TimedRobot {
 
 	//Joystick button declarations
 	boolean joyLTrigger;
+	boolean joyETrigger;
 	boolean joyESwifferIn;
 	boolean joyESwifferOut;
 	boolean joyEFrontpneu;
@@ -120,6 +121,10 @@ public class Robot extends TimedRobot {
 	//camera declarations (commented out for now)
 	//private AxisCamera cam1 = CameraServer.getInstance().addAxisCamera("10.13.17.11");
 	//private AxisCamera cam2 = CameraServer.getInstance().addAxisCamera("10.13.17.12");
+	private String[] hosts = {"10.13.17.11", "10.13.17.12"};
+    private AxisCamera cams = CameraServer.getInstance().addAxisCamera("cams", hosts);
+
+
 	
 	// This function is called once at the beginning during operator control
 	public void teleopInit() {
@@ -166,6 +171,7 @@ public class Robot extends TimedRobot {
 
 		//Declare and obtain button inputs
 		joyLTrigger = joyL.getTriggerPressed();
+		joyETrigger = joyE.getTriggerPressed();
 		joyESwifferIn = joyE.getRawButton(2);
 		joyESwifferOut = joyE.getRawButton(1);
 		joyEFrontpneu = joyE.getRawButtonPressed(5);

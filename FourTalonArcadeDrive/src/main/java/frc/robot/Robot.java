@@ -97,7 +97,6 @@ public class Robot extends TimedRobot {
 
 	//Joystick button declarations
 	boolean joyLTrigger;
-	boolean joyETrigger;
 	boolean joyESwifferIn;
 	boolean joyESwifferOut;
 	boolean joyEFrontpneu;
@@ -171,7 +170,6 @@ public class Robot extends TimedRobot {
 
 		//Declare and obtain button inputs
 		joyLTrigger = joyL.getTriggerPressed();
-		joyETrigger = joyE.getTriggerPressed();
 		joyESwifferIn = joyE.getRawButton(2);
 		joyESwifferOut = joyE.getRawButton(1);
 		joyEFrontpneu = joyE.getRawButtonPressed(5);

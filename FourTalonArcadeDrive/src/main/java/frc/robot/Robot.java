@@ -42,6 +42,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.cscore.AxisCamera;
 import edu.wpi.first.wpilibj.CameraServer;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -93,6 +94,7 @@ public class Robot extends TimedRobot {
 	Joystick joyE = new Joystick(0);
 	Joystick joyL = new Joystick(1);
 	Joystick joyR = new Joystick(2);
+	
 
 
 	//Joystick button declarations
@@ -116,6 +118,12 @@ public class Robot extends TimedRobot {
 	double otherVal = joyE.getY();
 	double elevatorVal = 0;
 	double swifferVal = 0;
+
+	//limit switch
+	DigitalInput limitSwitch;
+	boolean limitVal;
+
+
 	
 	//camera declarations (commented out for now)
 	//private AxisCamera cam1 = CameraServer.getInstance().addAxisCamera("10.13.17.11");
@@ -165,7 +173,10 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putBoolean("Front Pnuematics", joyEFrontpneu == true);
 		SmartDashboard.putBoolean("Back Pnuematics", joyEBackpneu == true);
 		*/
-		SmartDashboard.putNumber("test", 0.12);
+
+		//which port is the limit switch in?
+		limitSwitch = new DigitalInput(1);
+		limitVal = limitSwitch.get();
 		
 
 		//Declare and obtain button inputs
@@ -215,8 +226,8 @@ public class Robot extends TimedRobot {
 			elevatorVal = -0.5;
 		}
 
-		//swiffer in/out control
-		if(joyESwifferIn) {
+		//swiffer in/out control w/ limit switch
+		if(joyESwifferIn==true && limitVal==false) {
 			swifferVal = 0.5;
 		}
 		if(joyESwifferOut) {
@@ -251,6 +262,7 @@ public class Robot extends TimedRobot {
 		if(joyRspikeB) {
 			spikeHatchCollector.set(Relay.Value.kReverse);
 		}
+		
 		
 
 		//print the values for different variables for bugtesting

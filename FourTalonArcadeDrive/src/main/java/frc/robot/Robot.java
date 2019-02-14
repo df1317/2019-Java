@@ -86,7 +86,7 @@ public class Robot extends TimedRobot {
 	Relay spikeHatchCollector;
 
 	//pneumatic delarations
-	DoubleSolenoid solenoidFront = new DoubleSolenoid(0, 1);
+	DoubleSolenoid solenoidFront = new DoubleSolenoid(4, 5);
 	DoubleSolenoid solenoidBack = new DoubleSolenoid(6, 7);
 
     // Construct drivetrain by providing master motor controllers

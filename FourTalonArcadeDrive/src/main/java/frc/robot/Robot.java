@@ -74,15 +74,15 @@ public class Robot extends TimedRobot {
 //_______________Declarations_______________
 
 	//talon declaration
-	WPI_VictorSPX frontLeftMotor = new WPI_VictorSPX(1);
-	WPI_VictorSPX frontRightMotor = new WPI_VictorSPX(3);
-	WPI_VictorSPX leftSlave1 = new WPI_VictorSPX(2);
-	WPI_VictorSPX rightSlave1 = new WPI_VictorSPX(4);
-	WPI_VictorSPX elevator = new WPI_VictorSPX(8);
-	WPI_VictorSPX swiffer = new WPI_VictorSPX(5);
-	WPI_VictorSPX swifferupdown = new WPI_VictorSPX(6);
+	WPI_VictorSPX frontLeftMotor = new WPI_VictorSPX(2);
+	WPI_VictorSPX frontRightMotor = new WPI_VictorSPX(6);
+	WPI_VictorSPX leftSlave1 = new WPI_VictorSPX(1);
+	WPI_VictorSPX rightSlave1 = new WPI_VictorSPX(5);
+	WPI_VictorSPX elevator = new WPI_VictorSPX(4);
+	WPI_VictorSPX swiffer = new WPI_VictorSPX(8);
+	WPI_VictorSPX swifferupdown = new WPI_VictorSPX(3);
 	WPI_VictorSPX swifferupdownSlave = new WPI_VictorSPX(7);
-	WPI_VictorSPX ballShooter = new WPI_VictorSPX(9);
+	WPI_VictorSPX ballthingy = new WPI_VictorSPX(9);
 	Relay spikeHatchCollector;
 
 	//pneumatic delarations
@@ -105,8 +105,10 @@ public class Robot extends TimedRobot {
 	boolean joyESwifferOut;
 	boolean joyEFrontpneu;
 	boolean joyEBackpneu;
-	boolean joyRspikeF;
-	boolean joyRspikeB;
+	boolean joyEallpneu;
+	boolean joyRspikeup;
+	boolean joyRspikedown;
+	boolean joyLballshoot;
 	int joyEPOV = joyE.getPOV();
 
 	//Joystick button toggles
@@ -120,6 +122,7 @@ public class Robot extends TimedRobot {
 	double otherVal = joyE.getY();
 	double elevatorVal = 0;
 	double swifferVal = 0;
+	double ballshoot = 0;
 
 	//limit switch
 	DigitalInput limitSwitch = new DigitalInput(1);
@@ -183,14 +186,17 @@ public class Robot extends TimedRobot {
 		joyESwifferOut = joyE.getRawButton(1);
 		joyEFrontpneu = joyE.getRawButtonPressed(5);
 		joyEBackpneu = joyE.getRawButtonPressed(3);
-		joyRspikeF = joyR.getRawButton(6);
-		joyRspikeB = joyR.getRawButton(4);
+		joyEallpneu = joyE.getRawButton(6);
+		joyRspikeup = joyR.getRawButton(5);
+		joyRspikedown = joyR.getRawButton(3);
+		joyLballshoot = joyL.getRawButton(6);
 
 		//_____Motor and pneumatic control below_______
 		//any simple .set code
 		elevator.set(elevatorVal);
 		swiffer.set(swifferVal);
 		swifferupdown.set(otherVal);
+		ballthingy.set(ballshoot);
 
 		//Driving
 		// Deadband - within 10% joystick, make it zero
@@ -210,6 +216,11 @@ public class Robot extends TimedRobot {
 		if(speedToggle) {
 		leftVal = leftVal/2;
 		rightVal = rightVal/2;
+		}
+
+		//shoot the ball
+		if(joyLballshoot) {
+			ballshoot = 0.5;
 		}
 
 		//drive the diggity dang robit
@@ -240,6 +251,10 @@ public class Robot extends TimedRobot {
 		if(joyEBackpneu) {
 			backpneuToggle = !backpneuToggle;
 		}
+		if(joyEallpneu) {
+			backpneuToggle = !backpneuToggle;
+			frontpneuToggle = !frontpneuToggle;
+		}
 		if(frontpneuToggle) {
 			solenoidFront.set(DoubleSolenoid.Value.kForward);
 		}
@@ -254,10 +269,10 @@ public class Robot extends TimedRobot {
 		}	
 		
 		//spike controller for hatches
-		if(joyRspikeF) {
+		if(joyRspikeup) {
 			spikeHatchCollector.set(Relay.Value.kForward);
 		}
-		if(joyRspikeB) {
+		if(joyRspikedown) {
 			spikeHatchCollector.set(Relay.Value.kReverse);
 		}
 		

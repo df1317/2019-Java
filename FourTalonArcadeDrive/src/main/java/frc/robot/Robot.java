@@ -41,6 +41,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.cscore.AxisCamera;
+import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -48,6 +49,7 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.networktables.NetworkTable;
 
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.can.*;
@@ -120,11 +122,9 @@ public class Robot extends TimedRobot {
 	double swifferVal = 0;
 
 	//limit switch
-	DigitalInput limitSwitch;
+	DigitalInput limitSwitch = new DigitalInput(1);
 	boolean limitVal;
 
-
-	
 	//camera declarations (commented out for now)
 	//private AxisCamera cam1 = CameraServer.getInstance().addAxisCamera("10.13.17.11");
 	//private AxisCamera cam2 = CameraServer.getInstance().addAxisCamera("10.13.17.12");
@@ -174,10 +174,8 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putBoolean("Back Pnuematics", joyEBackpneu == true);
 		*/
 
-		//which port is the limit switch in?
-		limitSwitch = new DigitalInput(1);
+		//is the switch pushed in or nah?
 		limitVal = limitSwitch.get();
-		
 
 		//Declare and obtain button inputs
 		joyLTrigger = joyL.getTriggerPressed();

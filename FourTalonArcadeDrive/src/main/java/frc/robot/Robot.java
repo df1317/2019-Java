@@ -86,8 +86,8 @@ public class Robot extends TimedRobot {
 	Relay spikeHatchCollector;
 
 	//pneumatic delarations
-	DoubleSolenoid solenoidFront = new DoubleSolenoid(4, 5);
-	DoubleSolenoid solenoidBack = new DoubleSolenoid(6, 7);
+	// 
+	
 
     // Construct drivetrain by providing master motor controllers
 	DifferentialDrive drive = new DifferentialDrive(frontLeftMotor, frontRightMotor);
@@ -109,7 +109,7 @@ public class Robot extends TimedRobot {
 	boolean joyRspikeup;
 	boolean joyRspikedown;
 	boolean joyLballshoot;
-	int joyEPOV = joyE.getPOV();
+	
 
 	//Joystick button toggles
 	boolean speedToggle;
@@ -120,6 +120,7 @@ public class Robot extends TimedRobot {
 	double leftVal = 1.0 * joyL.getY();	// Sign this so forward is positive
 	double rightVal = -1.0 * joyR.getY(); // Sign this so right is positive
 	double otherVal = joyE.getY();
+	int joyEPOV;
 	double elevatorVal = 0;
 	double swifferVal = 0;
 	double ballshoot = 0;
@@ -138,6 +139,8 @@ public class Robot extends TimedRobot {
 	
 	// This function is called once at the beginning during operator control
 	public void teleopInit() {
+
+		joyEPOV = joyE.getPOV();
 
 		// Factory Default all hardware to prevent unexpected behaviour
 		frontLeftMotor.configFactoryDefault();
@@ -222,6 +225,9 @@ public class Robot extends TimedRobot {
 		if(joyLballshoot) {
 			ballshoot = 0.5;
 		}
+		else {
+			ballshoot = 0;
+		}
 
 		//drive the diggity dang robit
 		drive.tankDrive(leftVal, rightVal);	
@@ -231,50 +237,59 @@ public class Robot extends TimedRobot {
 		if (joyEPOV == 0) {
 			elevatorVal = 0.5;
 		}
-		if (joyEPOV == 4) {
+		else if (joyEPOV == 4) {
 			elevatorVal = -0.5;
+		}
+		else {
+			elevatorVal = 0;
 		}
 
 		//swiffer in/out control w/ limit switch
 		if(joyESwifferIn==true && limitVal==false) {
 			swifferVal = 0.5;
 		}
-		if(joyESwifferOut) {
+		else if(joyESwifferOut) {
 			swifferVal = -0.5;
+		}
+		else {
+			swifferVal = 0;
 		}
 
 		//everything pneumatic
 		//button based pneumatic control
-		if(joyEFrontpneu) {
-			frontpneuToggle = !frontpneuToggle;
-		}
-		if(joyEBackpneu) {
-			backpneuToggle = !backpneuToggle;
-		}
-		if(joyEallpneu) {
-			backpneuToggle = !backpneuToggle;
-			frontpneuToggle = !frontpneuToggle;
-		}
-		if(frontpneuToggle) {
-			solenoidFront.set(DoubleSolenoid.Value.kForward);
-		}
-		else {
-			solenoidFront.set(DoubleSolenoid.Value.kReverse);
-		}
-		if(backpneuToggle) {
-			solenoidBack.set(DoubleSolenoid.Value.kForward);
-		}
-		else {
-			solenoidBack.set(DoubleSolenoid.Value.kReverse);
-		}	
+		// if(joyEFrontpneu) {
+		// 	frontpneuToggle = !frontpneuToggle;
+		// }
+		// if(joyEBackpneu) {
+		// 	backpneuToggle = !backpneuToggle;
+		// }
+		// if(joyEallpneu) {
+		// 	backpneuToggle = !backpneuToggle;
+		// 	frontpneuToggle = !frontpneuToggle;
+		// }
+		// if(frontpneuToggle) {
+		// 	solenoidFront.set(DoubleSolenoid.Value.kForward);
+		// }
+		// else {
+		// 	solenoidFront.set(DoubleSolenoid.Value.kReverse);
+		// }
+		// if(backpneuToggle) {
+		// 	solenoidBack.set(DoubleSolenoid.Value.kForward);
+		// }
+		// else {
+		// 	solenoidBack.set(DoubleSolenoid.Value.kReverse);
+		// }	
 		
 		//spike controller for hatches
-		if(joyRspikeup) {
-			spikeHatchCollector.set(Relay.Value.kForward);
-		}
-		if(joyRspikedown) {
-			spikeHatchCollector.set(Relay.Value.kReverse);
-		}
+		// if(joyRspikeup) {
+		// 	spikeHatchCollector.set(Relay.Value.kForward);
+		// }
+		// else if(joyRspikedown) {
+		// 	spikeHatchCollector.set(Relay.Value.kReverse);
+		// }
+		// else {
+		// 	spikeHatchCollector.set(Relay.Value.kOff);
+		// }
 		
 		
 

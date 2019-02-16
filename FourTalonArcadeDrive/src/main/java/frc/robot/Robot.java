@@ -38,11 +38,14 @@ package frc.robot;
 
 //imports, duh
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Relay;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.cscore.AxisCamera;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.CameraServer;
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -55,21 +58,7 @@ import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.can.*;
 
 public class Robot extends TimedRobot {
-	/*
-	ID 0 = power distribution panel
-	ID 1 = left 1
-	ID 2 = left 2
-	ID 3 = right 1
-	ID 4 = right 2
-	ID 5 = swiffer actuactor
-	ID 6 = swiffer 1
-	ID 7 = swiffer 2
-	ID 8 = elevator
-	ID 9 = ball shooter
-	ID 10 = pcm (pneu control moduel)
-	spike does hatch collector
-	*/
-
+	
 
 //_______________Declarations_______________
 
@@ -86,8 +75,8 @@ public class Robot extends TimedRobot {
 	Relay spikeHatchCollector;
 
 	//pneumatic delarations
-	// 
-	
+	DoubleSolenoid solenoidFront = new DoubleSolenoid(10, 4, 5);
+	DoubleSolenoid solenoidBack = new DoubleSolenoid(10, 6, 7);
 
     // Construct drivetrain by providing master motor controllers
 	DifferentialDrive drive = new DifferentialDrive(frontLeftMotor, frontRightMotor);
@@ -96,8 +85,6 @@ public class Robot extends TimedRobot {
 	Joystick joyE = new Joystick(0);
 	Joystick joyL = new Joystick(1);
 	Joystick joyR = new Joystick(2);
-	
-
 
 	//Joystick button declarations
 	boolean joyLTrigger;
@@ -109,6 +96,8 @@ public class Robot extends TimedRobot {
 	boolean joyRspikeup;
 	boolean joyRspikedown;
 	boolean joyLballshoot;
+
+	Compressor compressor;
 	
 
 	//Joystick button toggles
@@ -117,9 +106,9 @@ public class Robot extends TimedRobot {
 	boolean backpneuToggle;
 
 	//Variable declarations regarding the joysticks
-	double leftVal = 1.0 * joyL.getY();	// Sign this so forward is positive
-	double rightVal = -1.0 * joyR.getY(); // Sign this so right is positive
-	double otherVal = joyE.getY();
+	double leftVal;
+	double rightVal;
+	double otherVal;
 	int joyEPOV;
 	double elevatorVal = 0;
 	double swifferVal = 0;
@@ -129,32 +118,28 @@ public class Robot extends TimedRobot {
 	DigitalInput limitSwitch = new DigitalInput(1);
 	boolean limitVal;
 
-	//camera declarations (commented out for now)
-	//private AxisCamera cam1 = CameraServer.getInstance().addAxisCamera("10.13.17.11");
-	//private AxisCamera cam2 = CameraServer.getInstance().addAxisCamera("10.13.17.12");
+	//camera declarations
 	private String[] hosts = {"10.13.17.11", "10.13.17.12"};
     private AxisCamera cams = CameraServer.getInstance().addAxisCamera("cams", hosts);
 
 
 	
-	// This function is called once at the beginning during operator control
-	public void teleopInit() {
-
-		joyEPOV = joyE.getPOV();
-
-		// Factory Default all hardware to prevent unexpected behaviour
+// This function is called once at the beginning during operator control
+	public void robotInit() {
+		// Factory Default all hardware to prevent unexpected behaviour (elevator commented out for testing)
 		frontLeftMotor.configFactoryDefault();
 		frontRightMotor.configFactoryDefault();
 		leftSlave1.configFactoryDefault();
 		rightSlave1.configFactoryDefault();
-		elevator.configFactoryDefault();
+		//elevator.configFactoryDefault();
 		swiffer.configFactoryDefault();
 		swifferupdown.configFactoryDefault();
 
-		//set the slave talons to follow the main talons
+		//set the slaves to follow the mains
 		leftSlave1.follow(frontLeftMotor);
 		rightSlave1.follow(frontRightMotor);
-		swifferupdownSlave.follow(swifferupdown);
+		//swifferupdownSlave.follow(swifferupdown);
+
 
 		//toggle the functions below to make sure that the wheels are turning the correct way
 		frontLeftMotor.setInverted(false); // <<<<<< Adjust this until robot drives forward when stick is forward
@@ -169,16 +154,12 @@ public class Robot extends TimedRobot {
 	}
 
 	// This function is called periodically during operator control
-	public void teleopPeriodic() {
+	public void robotPeriodic() {
 
-		//Put info on the smartdashboard
-		/*
-		SmartDashboard.putNumber("Left Joystick Y value", joyL.getY());
-		SmartDashboard.putNumber("Right Joystick Y value", joyR.getY());
-		SmartDashboard.putNumber("Extra Joystick Y value", joyE.getY());
-		SmartDashboard.putBoolean("Front Pnuematics", joyEFrontpneu == true);
-		SmartDashboard.putBoolean("Back Pnuematics", joyEBackpneu == true);
-		*/
+		//get joystick values and buttons and such
+		leftVal = -1.0 * joyL.getY();
+		rightVal = 1.0 * joyR.getY();
+		otherVal = joyE.getY();
 
 		//is the switch pushed in or nah?
 		limitVal = limitSwitch.get();
@@ -189,26 +170,25 @@ public class Robot extends TimedRobot {
 		joyESwifferOut = joyE.getRawButton(1);
 		joyEFrontpneu = joyE.getRawButtonPressed(5);
 		joyEBackpneu = joyE.getRawButtonPressed(3);
-		joyEallpneu = joyE.getRawButton(6);
+		joyEallpneu = joyE.getRawButtonPressed(6);
 		joyRspikeup = joyR.getRawButton(5);
 		joyRspikedown = joyR.getRawButton(3);
 		joyLballshoot = joyL.getRawButton(6);
 
 		//_____Motor and pneumatic control below_______
-		//any simple .set code
-		elevator.set(elevatorVal);
+		//any simple .set code (elevator commented out for testing)
+		//elevator.set(elevatorVal);
 		swiffer.set(swifferVal);
-		swifferupdown.set(otherVal);
+		swifferupdown.set(otherVal*-0.5);
+		swifferupdownSlave.set(otherVal/2);
 		ballthingy.set(ballshoot);
 
 		//Driving
-		// Deadband - within 10% joystick, make it zero
-
-
-		if (Math.abs(leftVal) < 0.10) {
+		// Deadband - within 5% joystick, make it zero
+		if (Math.abs(leftVal) < 0.05) {
 			leftVal = 0;
 		}
-		if (Math.abs(rightVal) < 0.10) {
+		if (Math.abs(rightVal) < 0.05) {
 			rightVal = 0;
 		}
 
@@ -217,8 +197,8 @@ public class Robot extends TimedRobot {
 			speedToggle = !speedToggle;
 		}
 		if(speedToggle) {
-		leftVal = leftVal/2;
-		rightVal = rightVal/2;
+			leftVal = leftVal/2;
+			rightVal = rightVal/2;
 		}
 
 		//shoot the ball
@@ -229,27 +209,32 @@ public class Robot extends TimedRobot {
 			ballshoot = 0;
 		}
 
+		//System.out.println("leftVal = " + leftVal + " rightval = " + rightVal);
+
 		//drive the diggity dang robit
 		drive.tankDrive(leftVal, rightVal);	
 
-		//elevator/swiffer control
-		//elevator up/down control
+		//elevator up/down control (reformatted for the sake of testing, just about all of the code for the elevator is here)
+		joyEPOV = joyE.getPOV();
 		if (joyEPOV == 0) {
-			elevatorVal = 0.5;
+			elevatorVal = 0.75;
 		}
-		else if (joyEPOV == 4) {
-			elevatorVal = -0.5;
+		else if (joyEPOV == 180) {
+			elevatorVal = -0.75;
 		}
 		else {
 			elevatorVal = 0;
 		}
 
+		System.out.println("elevatorVal = " + elevatorVal);
+		elevator.set(elevatorVal);
+
 		//swiffer in/out control w/ limit switch
-		if(joyESwifferIn==true && limitVal==false) {
-			swifferVal = 0.5;
+		if(joyESwifferIn/* && limitVal==false*/) {
+			swifferVal = 0.25;
 		}
 		else if(joyESwifferOut) {
-			swifferVal = -0.5;
+			swifferVal = -0.01;
 		}
 		else {
 			swifferVal = 0;
@@ -257,28 +242,33 @@ public class Robot extends TimedRobot {
 
 		//everything pneumatic
 		//button based pneumatic control
-		// if(joyEFrontpneu) {
-		// 	frontpneuToggle = !frontpneuToggle;
-		// }
-		// if(joyEBackpneu) {
-		// 	backpneuToggle = !backpneuToggle;
-		// }
-		// if(joyEallpneu) {
-		// 	backpneuToggle = !backpneuToggle;
-		// 	frontpneuToggle = !frontpneuToggle;
-		// }
-		// if(frontpneuToggle) {
-		// 	solenoidFront.set(DoubleSolenoid.Value.kForward);
-		// }
-		// else {
-		// 	solenoidFront.set(DoubleSolenoid.Value.kReverse);
-		// }
-		// if(backpneuToggle) {
-		// 	solenoidBack.set(DoubleSolenoid.Value.kForward);
-		// }
-		// else {
-		// 	solenoidBack.set(DoubleSolenoid.Value.kReverse);
-		// }	
+
+		
+		 if(joyEFrontpneu) {
+		 	frontpneuToggle = !frontpneuToggle;
+		 }
+		 if(joyEBackpneu) {
+		 	backpneuToggle = !backpneuToggle;
+		}
+
+		 if(joyEallpneu) {
+		 	backpneuToggle = !backpneuToggle;
+		 	frontpneuToggle = !frontpneuToggle;
+		 }
+
+		 if(frontpneuToggle) {
+			 solenoidFront.set(DoubleSolenoid.Value.kForward);
+		 }
+		 else {
+			 solenoidFront.set(DoubleSolenoid.Value.kReverse);
+		 }
+		 if(backpneuToggle) {
+			 solenoidBack.set(DoubleSolenoid.Value.kForward);
+		 }
+		 else {
+			 solenoidBack.set(DoubleSolenoid.Value.kReverse);
+		 }	
+		
 		
 		//spike controller for hatches
 		// if(joyRspikeup) {
@@ -291,10 +281,9 @@ public class Robot extends TimedRobot {
 		// 	spikeHatchCollector.set(Relay.Value.kOff);
 		// }
 		
-		
 
 		//print the values for different variables for bugtesting
-		System.out.println("JoyL:" + leftVal + "  joyR:" + rightVal + " joy3: " + otherVal + "elevatorVal: " + elevatorVal + "swifferVal: " + swifferVal);
+		//System.out.println("JoyL:" + leftVal + "  joyR:" + rightVal + " joy3: " + otherVal + "elevatorVal: " + elevatorVal + "swifferVal: " + swifferVal);
 		
 	}
 }

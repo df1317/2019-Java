@@ -41,6 +41,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Relay;
+import edu.wpi.first.wpilibj.Sendable;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.cscore.AxisCamera;
@@ -55,6 +56,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.networktables.NetworkTable;
 
+//import com.analog.adis16470.frc.ADIS16470_IMU;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.*;
@@ -80,6 +82,12 @@ public class Robot extends TimedRobot {
 	DoubleSolenoid solenoidFront = new DoubleSolenoid(10, 4, 5);
 	DoubleSolenoid solenoidBack = new DoubleSolenoid(10, 6, 7);
 	Compressor compressor;
+
+	//adis decleration
+	//public static final ADIS16470_IMU imu = new ADIS16470_IMU();
+	double angleX;
+	double angleY;
+	double angleZ;
 
     // Construct drivetrain by providing master motor controllers
 	DifferentialDrive drive = new DifferentialDrive(frontLeftMotor, frontRightMotor);
@@ -131,6 +139,11 @@ public class Robot extends TimedRobot {
 
 // This function is called once at the beginning during operator control
 	public void robotInit() {
+
+		//zero-ing the adis (uncomment the calibrate thingy if things don't work)
+		//imu.reset();
+		//imu.calibrate();
+
 		// Factory Default all hardware to prevent unexpected behaviour (elevator commented out for testing)
 		frontLeftMotor.setNeutralMode(NeutralMode.Brake);
 		frontRightMotor.setNeutralMode(NeutralMode.Brake);
@@ -156,6 +169,15 @@ public class Robot extends TimedRobot {
 
 	// This function is called periodically during operator control
 	public void robotPeriodic() {
+
+		//get angle from the adis
+		//angleX = imu.getAngleX();
+		//angleY = imu.getAngleY();
+		//angleZ = imu.getAngleZ();
+		System.out.println("X" + angleX + "Y" + angleY + "Z" + angleZ);
+		SmartDashboard.putNumber("X", angleX);
+		SmartDashboard.putNumber("Y", angleY);
+		SmartDashboard.putNumber("Z", angleZ);
 
 		//get joystick values and buttons and such
 		leftVal = -1.0 * joyL.getY();
@@ -183,8 +205,8 @@ public class Robot extends TimedRobot {
 		//motor+pnuematic control
 		//swiffer up/down
 		if (joyETRigger == false) {
-			swifferupdown.set(otherVal/2);
-			swifferupdownSlave.set(otherVal/-2);
+			swifferupdown.set(otherVal/4);
+			swifferupdownSlave.set(otherVal/-4);
 			//this just sets the swiffer values for it going up and down to the value of the extra joystick
 		}
 		else {
@@ -227,7 +249,7 @@ public class Robot extends TimedRobot {
 		ballthingy.set(ballshoot);
 
 		//testing limitswitch
-		System.out.println("limitVal " + limitVal);
+		//System.out.println("limitVal " + limitVal);
 
 
 		//System.out.println("leftVal = " + leftVal + " rightval = " + rightVal);

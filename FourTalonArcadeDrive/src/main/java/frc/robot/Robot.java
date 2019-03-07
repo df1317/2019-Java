@@ -133,12 +133,19 @@ public class Robot extends TimedRobot {
 	DigitalInput limitSwitch;
 	boolean limitVal;
 
+	CameraServer server;
+
 	//camera declarations
-	private String[] hosts = {"10.13.17.11", "10.13.17.12"};
-    private AxisCamera cams = CameraServer.getInstance().addAxisCamera("cams", hosts);
+	//private String[] hosts = {"10.13.17.11", "10.13.17.12"};
+	//private AxisCamera cams = CameraServer.getInstance().addAxisCamera("cams", hosts);
+
+
 
 // This function is called once at the beginning during operator control
 	public void robotInit() {
+
+		server = CameraServer.getInstance();
+		server.startAutomaticCapture();
 
 		//zero-ing the adis (uncomment the calibrate thingy if things don't work)
 		//imu.reset();
